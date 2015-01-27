@@ -29,14 +29,10 @@ $(document).on('ready', function() {
   // running numerical days
   var spliceInMonths = function(days){
     for (var i=0; i<days.length; i++){
-      var j = i + 1;
-      if (days[j] === undefined){
-        break;
-      }
-      if (days[j] < days[i]){
-        days.splice(j,0, now.format("MMMM"));
-        i++;
-      }
+      if(Number(days[i]) === 1){
+         days.splice(i,0, now.format("MMMM"));
+         i++;
+       }
     }
     return days;
   };
@@ -48,22 +44,40 @@ $(document).on('ready', function() {
       return $('<p>' + day + '</p>');
     else 
       return $('<p class="month">' + day + '</p>');
-  };                    
+  };
+
+  // Helper function to append a new week
+  var appendAWeek = function(div){
+    var numericalDays = nextWeek();
+    numericalDays = spliceInMonths(numericalDays).map(formatMonth);
+    div.append(numericalDays);
+  };               
   
 
   wrapper.append('<p>Today</p>');
-  var numericalDays = nextWeek();
-  numericalDays = spliceInMonths(numericalDays).map(formatMonth);
-  wrapper.append(numericalDays);
+  appendAWeek(wrapper);
+  $(".calendar").append(wrapper);
 
-  $(".calendar").append(monthWrapper);
+
+  // Show more button to append more weeks
+  $("#show-more").on('click',function(){
+    appendAWeek(wrapper);  
+
+    // Hide the show more button once infinite scroll kicks in
+    if ($(".wrapper").height() > $(window).height()){
+      $("#show-more").hide();
+    }
+
+  });
+
 
 
   // PAGINATE, YO /////////////////////////////////////////////////////////////
 
   $(window).scroll(function(){
     if  ($(window).scrollTop() == $(document).height() - $(window).height()){
-          // run our call for pagination
+          
+          appendAWeek(wrapper);
     }
   }); 
 

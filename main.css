@@ -9,6 +9,15 @@ body {
 .wrapper {
   width: 600px;
   margin: 0 auto;
+  /*border: 1px solid #ccc;*/
+  position: relative;
+}
+
+#show-more {
+  /*position: relative;
+  top: 0;
+  left: 0;*/
+  width: 100px;
 }
 
 .title {
@@ -27,3 +36,4 @@ body {
 .appointments {
   list-style-type: none;
 }
+
