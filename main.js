@@ -86,7 +86,7 @@ $(document).on('ready', function() {
 
   $(".item-form").hide();
 
-  $(".day").on('click',function(e){
+  $(".wrapper").on("click",".day",function(e){
     console.log("Clicked on a day");
     var clicked = $(this);
 
@@ -101,9 +101,11 @@ $(document).on('ready', function() {
 
     form.find(".item-submit").on('click',function(e){
       e.preventDefault();
+
       var newItem = $('<p class="item"></p>');
       newItem.append(textarea.val());
       clicked.parent().append(newItem);
+
       form.remove();
     });
 
