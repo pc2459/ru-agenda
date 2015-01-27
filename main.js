@@ -41,7 +41,7 @@ $(document).on('ready', function() {
   var formatMonth = function(day){
     var reg = /^\d+$/;
     if (reg.test(day))
-      return $('<p>' + day + '</p>');
+      return $('<div class="day-wrapper"><p class="day">' + day + '</p></div>');
     else 
       return $('<p class="month">' + day + '</p>');
   };
@@ -54,7 +54,7 @@ $(document).on('ready', function() {
   };               
   
 
-  wrapper.append('<p>Today</p>');
+  wrapper.append('<div class="day-wrapper"><p class="day">Today</p></div>');
   appendAWeek(wrapper);
   $(".calendar").append(wrapper);
 
@@ -80,6 +80,34 @@ $(document).on('ready', function() {
           appendAWeek(wrapper);
     }
   }); 
+
+
+  // EDIT INLINE FORM /////////////////////////////////////////////////////////
+
+  $(".item-form").hide();
+
+  $(".day").on('click',function(e){
+    console.log("Clicked on a day");
+    var clicked = $(this);
+
+    var form = $(".item-form").clone();
+    form.show();
+    
+    clicked.parent().append(form);
+
+    var textarea = form.find(".item-textarea");
+
+    textarea.focus();
+
+    form.find(".item-submit").on('click',function(e){
+      e.preventDefault();
+      var newItem = $('<p class="item"></p>');
+      newItem.append(textarea.val());
+      clicked.parent().append(newItem);
+      form.remove();
+    });
+
+  });
 
   
 });
