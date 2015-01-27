@@ -1,0 +1,29 @@
+html {
+  font-size: 10px;
+}
+body {
+  font-size: 1.4rem;
+  font-family: 'Raleway', sans-serif;
+}
+
+.wrapper {
+  width: 600px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.month-wrapper {
+}
+
+.month {
+  font-size: 1.8rem;
+  color: #c14867;
+}
+
+.appointments {
+  list-style-type: none;
+}
