@@ -1,11 +1,13 @@
 $(document).on('ready', function() {
 
 
-  // SET UP FIRST WEEK //////////////////////////////////////
+  // SET UP VARIABLES /////////////////////////////////////////////////////////
 
   var wrapper = $('.calendar');
   var now = moment();
   
+
+  // SET UP FUNCTIONS /////////////////////////////////////////////////////////
   
   // Create an array of the next 7 days
   var genDays = function(){
@@ -27,7 +29,7 @@ $(document).on('ready', function() {
     return days;
   };
 
-  // Inject HTML into day/month formatting
+  // Helper function to inject HTML into day/month formatting
   var formatMonth = function(day){
     var reg = /^\d+$/;
     if (reg.test(day))
@@ -43,7 +45,8 @@ $(document).on('ready', function() {
     return week;
   };               
   
-  // Append to the DOM
+  // APPEND TO DOM ////////////////////////////////////////////////////////////
+
   wrapper.append('<p class="month">' + now.format("MMMM") + '</p>')
           .append('<div class="day-wrapper"><p class="day">Today</p></div>')
           .append(newWeek());
@@ -53,12 +56,10 @@ $(document).on('ready', function() {
   // Show more button to append more weeks
   $("#show-more").on('click',function(){
     wrapper.append(newWeek);  
-
     // Hide the show more button once infinite scroll kicks in
     if ($(".wrapper").height() > $(window).height()){
       $("#show-more").hide();
     }
-
   });
 
 
@@ -87,8 +88,6 @@ $(document).on('ready', function() {
     var form = $(".item-form:first").clone();
 
     console.log("Clicked on a day.");
-    
-    
     
     // Append the form   
     clicked.parent().append(form);
@@ -131,6 +130,15 @@ $(document).on('ready', function() {
       form.remove();
       clicked.show();
     });
+
+    // Handle form deletions
+    form.find(".item-delete").on('click',function(e){
+      e.preventDefault();
+
+      clicked.remove();
+      form.remove();
+    });
+
 
   });
 
