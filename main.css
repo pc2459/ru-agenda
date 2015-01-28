@@ -41,6 +41,10 @@ p.month {
   color: #c14867;
 }
 
+.day {
+  border-bottom: 1px dotted #ccc;
+}
+
 .day:hover {
   cursor: pointer;
 }

@@ -3,27 +3,20 @@ $(document).on('ready', function() {
 
   // SET UP FIRST WEEK //////////////////////////////////////
 
-  var now = moment();
-  var thisMonth = now.format("MMMM");
-
   var wrapper = $('.calendar');
-  wrapper.append('<p class="month">' + thisMonth + '</p>');
-
-  // Helper function for creating an array of the next 7 days
-  var nextWeek = function(){
-    var newWeek = [ now.add(1,'d').format("D"), 
-                        now.add(1,'d').format("D"), 
-                        now.add(1,'d').format("D"),
-                        now.add(1,'d').format("D"), 
-                        now.add(1,'d').format("D"), 
-                        now.add(1,'d').format("D"),
-                        now.add(1,'d').format("D")   
-                  ];
+  var now = moment();
+  
+  
+  // Create an array of the next 7 days
+  var genDays = function(){
+    var newWeek = [];
+    for(var i=0; i<7; i++){
+      newWeek.push(now.add(1,'d').format("D"));
+    }
     return newWeek;
   };
 
-  // Helper function for splicing in textual months to a list of 
-  // running numerical days
+  // Splice in text month names to an array of numerical days
   var spliceInMonths = function(days){
     for (var i=0; i<days.length; i++){
       if(Number(days[i]) === 1){
@@ -34,7 +27,7 @@ $(document).on('ready', function() {
     return days;
   };
 
-  // Helper function for injecting HTML into day/month formatting
+  // Inject HTML into day/month formatting
   var formatMonth = function(day){
     var reg = /^\d+$/;
     if (reg.test(day))
@@ -43,22 +36,23 @@ $(document).on('ready', function() {
       return $('<p class="month">' + day + '</p>');
   };
 
-  // Helper function to append a new week
-  var appendAWeek = function(div){
-    var numericalDays = nextWeek();
-    numericalDays = spliceInMonths(numericalDays).map(formatMonth);
-    div.append(numericalDays);
+  // Create a new week 
+  var newWeek = function(){
+    var week = genDays();
+    week = spliceInMonths(week).map(formatMonth);
+    return week;
   };               
   
-
-  wrapper.append('<div class="day-wrapper"><p class="day">Today</p></div>');
-  appendAWeek(wrapper);
+  // Append to the DOM
+  wrapper.append('<p class="month">' + now.format("MMMM") + '</p>')
+          .append('<div class="day-wrapper"><p class="day">Today</p></div>')
+          .append(newWeek());
   $(".calendar").append(wrapper);
 
 
   // Show more button to append more weeks
   $("#show-more").on('click',function(){
-    appendAWeek(wrapper);  
+    wrapper.append(newWeek);  
 
     // Hide the show more button once infinite scroll kicks in
     if ($(".wrapper").height() > $(window).height()){
@@ -69,12 +63,14 @@ $(document).on('ready', function() {
 
 
 
+
+
   // PAGINATE, YO /////////////////////////////////////////////////////////////
 
   $(window).scroll(function(){
     if  ($(window).scrollTop() == $(document).height() - $(window).height()){
           
-          appendAWeek(wrapper);
+      wrapper.append(newWeek);
     }
   }); 
 
@@ -125,8 +121,7 @@ $(document).on('ready', function() {
     clicked.parent().append(form);   
 
     var textarea = form.find(".item-textarea");
-    textarea.val(clicked.text());
-    textarea.focus();
+    textarea.val(clicked.text()).focus();
 
     // Handle form submits
     form.find(".item-submit").on('click',function(e){
