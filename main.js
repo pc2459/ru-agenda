@@ -85,20 +85,21 @@ $(document).on('ready', function() {
   // EDIT INLINE FORM /////////////////////////////////////////////////////////
 
   $(".item-form").hide();
+  var form = $(".item-form").clone();
 
+  // Add agenda item
   $(".wrapper").on("click",".day",function(e){
-    console.log("Clicked on a day");
+
     var clicked = $(this);
 
-    var form = $(".item-form").clone();
-    form.show();
-    
+      
     clicked.parent().append(form);
+    form.show();  
 
     var textarea = form.find(".item-textarea");
-
     textarea.focus();
 
+    // Handle form submits
     form.find(".item-submit").on('click',function(e){
       e.preventDefault();
 
@@ -107,6 +108,30 @@ $(document).on('ready', function() {
       clicked.parent().append(newItem);
 
       form.remove();
+    });
+
+  });
+
+  // Edit agenda item
+  $(".wrapper").on("click",".item",function(){
+    console.log("Clicked edit an item");
+    var clicked = $(this);
+
+    form.show();    
+    clicked.hide();
+    clicked.parent().append(form);   
+
+    var textarea = form.find(".item-textarea");
+    textarea.val(clicked.text());
+    textarea.focus();
+
+    // Handle form submits
+    form.find(".item-submit").on('click',function(e){
+      e.preventDefault();
+
+      clicked.text(textarea.val());
+      form.remove();
+      clicked.show();
     });
 
   });
