@@ -1,9 +1,6 @@
 $(document).on('ready', function() {
 
 
-
-
-
   // SET UP FIRST WEEK //////////////////////////////////////
 
   var now = moment();
@@ -85,17 +82,21 @@ $(document).on('ready', function() {
   // EDIT INLINE FORM /////////////////////////////////////////////////////////
 
   $(".item-form").hide();
-  var form = $(".item-form").clone();
+  
 
   // Add agenda item
   $(".wrapper").on("click",".day",function(e){
 
     var clicked = $(this);
+    var form = $(".item-form:first").clone();
 
-      
+    console.log("Clicked on a day.");
+    
+    
+    
+    // Append the form   
     clicked.parent().append(form);
     form.show();  
-
     var textarea = form.find(".item-textarea");
     textarea.focus();
 
@@ -115,7 +116,9 @@ $(document).on('ready', function() {
   // Edit agenda item
   $(".wrapper").on("click",".item",function(){
     console.log("Clicked edit an item");
+
     var clicked = $(this);
+    var form = $(".item-form:first").clone();
 
     form.show();    
     clicked.hide();
