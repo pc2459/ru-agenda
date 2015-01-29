@@ -197,8 +197,8 @@ $(document).on('ready', function() {
       console.log (appointments[day.attr('id')]);
       delete appointments[day.attr('id')];
     }
-    else if ( appointments[day.attr('id')].length > 1 ){
 
+    else if ( appointments[day.attr('id')].length > 1 ){
       var flag = false;
         for (var i = 0; i < appointments[day.attr('id')].length; i++){
           if (appointments[day.attr('id')][i] == clicked.html() && !flag){
@@ -206,13 +206,9 @@ $(document).on('ready', function() {
             flag = true;
           }        
       }
-      console.log (appointments[day.attr('id')]);
-      console.log (clicked.html());
-
     }
 
     // Delete from local storage
-    // delete appointments[day.attr('id')];
     localStorage.setItem("appts", JSON.stringify(appointments));
 
     clicked.remove();
