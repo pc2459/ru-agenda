@@ -187,13 +187,32 @@ $(document).on('ready', function() {
   // Delete agenda item
   $('.wrapper').on('click','.item-delete',function(e){
     e.preventDefault();
-    var clicked = $(this).closest('form').siblings('.item');
+    var clicked = $(this).closest('form').prev('.item');
     var day = $(this).closest('form').siblings('.day');
     var form = $(this).closest('form');
     console.log("day,",day.attr('id'));
+    console.log("clicked,",clicked);
+
+    if (appointments[day.attr('id')].length <= 1){
+      console.log (appointments[day.attr('id')]);
+      delete appointments[day.attr('id')];
+    }
+    else if ( appointments[day.attr('id')].length > 1 ){
+
+      var flag = false;
+        for (var i = 0; i < appointments[day.attr('id')].length; i++){
+          if (appointments[day.attr('id')][i] == clicked.html() && !flag){
+            appointments[day.attr('id')].splice(i,1);
+            flag = true;
+          }        
+      }
+      console.log (appointments[day.attr('id')]);
+      console.log (clicked.html());
+
+    }
 
     // Delete from local storage
-    delete appointments[day.attr('id')];
+    // delete appointments[day.attr('id')];
     localStorage.setItem("appts", JSON.stringify(appointments));
 
     clicked.remove();
