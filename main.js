@@ -5,7 +5,13 @@ $(document).on('ready', function() {
 
   var wrapper = $('.calendar');
   var now = moment();
-  
+
+  // localStorage.removeItem("appts");
+  // Convert appointments back from the stringified JSON 
+  var appointments = JSON.parse(localStorage.getItem("appts"));
+  var dateID = moment();
+
+  appointments = appointments || {};
 
   // SET UP FUNCTIONS /////////////////////////////////////////////////////////
   
@@ -33,7 +39,7 @@ $(document).on('ready', function() {
   var formatMonth = function(day){
     var reg = /^\d+$/;
     if (reg.test(day))
-      return $('<div class="day-wrapper"><p class="day">' + day + '</p></div>');
+      return $('<div class="day-wrapper"><p class="day" id="' + (dateID.add(1,'d').format("YYYYMMDD")) +'">' + day + '</p></div>');
     else 
       return $('<p class="month">' + day + '</p>');
   };
@@ -43,15 +49,23 @@ $(document).on('ready', function() {
     var week = genDays();
     week = spliceInMonths(week).map(formatMonth);
     return week;
-  };               
+  };        
+
+  var repopulateAppointments = function(){
+    console.log("WTF", $("p").length);
+    for (var item in appointments){
+      $('[id='+item+']').not('.populated').addClass('populated').after('<p class="item">' + appointments[item] + '</p>');
+    }
+  };      
+
   
   // APPEND TO DOM ////////////////////////////////////////////////////////////
 
   wrapper.append('<p class="month">' + now.format("MMMM") + '</p>')
-          .append('<div class="day-wrapper"><p class="day">Today</p></div>')
+          .append('<div class="day-wrapper"><p class="day" id="'+ dateID.format("YYYYMMDD") +'">Today</p></div>')
           .append(newWeek());
   $(".calendar").append(wrapper);
-
+  repopulateAppointments();
 
   // Show more button to append more weeks
   $("#show-more").on('click',function(){
@@ -64,14 +78,13 @@ $(document).on('ready', function() {
 
 
 
-
-
   // PAGINATE, YO /////////////////////////////////////////////////////////////
 
   $(window).scroll(function(){
     if  ($(window).scrollTop() == $(document).height() - $(window).height()){
           
       wrapper.append(newWeek);
+      repopulateAppointments();
     }
   }); 
 
@@ -101,7 +114,10 @@ $(document).on('ready', function() {
 
       var newItem = $('<p class="item"></p>');
       newItem.append(textarea.val());
+      appointments[clicked.attr('id')] = newItem.html();
+      localStorage.setItem("appts", JSON.stringify(appointments));
       clicked.parent().append(newItem);
+      clicked.addClass('populated');
 
       form.remove();
     });
@@ -126,7 +142,10 @@ $(document).on('ready', function() {
     form.find(".item-submit").on('click',function(e){
       e.preventDefault();
 
-      clicked.text(textarea.val());
+      var updatedItem = clicked.text(textarea.val());
+      appointments[clicked.attr('id')] = updatedItem.html();
+      localStorage.setItem("appts", JSON.stringify(appointments));
+
       form.remove();
       clicked.show();
     });
