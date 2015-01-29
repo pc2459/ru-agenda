@@ -92,37 +92,66 @@ $(document).on('ready', function() {
   // EDIT INLINE FORM /////////////////////////////////////////////////////////
 
   $(".item-form").hide();
+
+  var createForm = function(){
+    return $(".item-form:first").clone();
+  };
+
+  var appendForm = function(dayWrapper){
+    form = createForm();
+    dayWrapper.append(form);
+    form.show();
+    form.find(".item-textarea").focus();
+  };
+
+  var createItem = function(data){
+    var newItem = $('<p class="item"></p>');
+    newItem.append(data);
+    return newItem;
+    
+  };
+
+  var addToLocalStorage = function(day, item){
+    appointments[day.attr('id')] = item.html();
+    console.log(appointments);
+    localStorage.setItem("appts", JSON.stringify(appointments));
+    day.addClass('populated');
+  };
   
+  var appendItem = function(dayWrapper, item){
+    dayWrapper.append(item);
+
+  };
 
   // Add agenda item
   $(".wrapper").on("click",".day",function(e){
 
     var clicked = $(this);
-    var form = $(".item-form:first").clone();
+    var dayWrapper = $(this).parent();
 
-    console.log("Clicked on a day.");
-    
-    // Append the form   
-    clicked.parent().append(form);
-    form.show();  
-    var textarea = form.find(".item-textarea");
-    textarea.focus();
-
-    // Handle form submits
-    form.find(".item-submit").on('click',function(e){
-      e.preventDefault();
-
-      var newItem = $('<p class="item"></p>');
-      newItem.append(textarea.val());
-      appointments[clicked.attr('id')] = newItem.html();
-      localStorage.setItem("appts", JSON.stringify(appointments));
-      clicked.parent().append(newItem);
-      clicked.addClass('populated');
-
-      form.remove();
-    });
+    appendForm(dayWrapper);
+    console.log("Clicked on a day");
 
   });
+
+  $('.wrapper').on('click', '.item-submit', function(event){
+
+    event.preventDefault();
+
+    var data = $('.item-textarea').val();
+    var day = $(this).closest('form').siblings('.day');
+    var dayWrapper = day.parent();
+    var form = $(this).closest('form');
+
+    var item = createItem(data);
+    addToLocalStorage(day, item);
+    appendItem(dayWrapper, item);
+
+    form.remove();
+  });
+
+
+
 
   // Edit agenda item
   $(".wrapper").on("click",".item",function(){
