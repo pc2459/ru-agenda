@@ -6,12 +6,15 @@ $(document).on('ready', function() {
   var wrapper = $('.calendar');
   var now = moment();
 
+
   // localStorage.removeItem("appts");
   // Convert appointments back from the stringified JSON 
   var appointments = JSON.parse(localStorage.getItem("appts"));
   var dateID = moment();
 
   appointments = appointments || {};
+
+    console.log(appointments);
 
   // SET UP FUNCTIONS /////////////////////////////////////////////////////////
   
@@ -53,7 +56,13 @@ $(document).on('ready', function() {
 
   var repopulateAppointments = function(){
     for (var item in appointments){
-      $('[id='+item+']').not('.populated').addClass('populated').after('<p class="item">' + appointments[item] + '</p>');
+      for (var i=0; i<appointments[item].length; i++){
+        $('[id='+item+']')
+        .not('.populated')
+        .after('<p class="item">' + appointments[item][i] + '</p>');
+      }
+      $('[id='+item+']')
+      .addClass('populated');
     }
   };      
 
@@ -111,7 +120,16 @@ $(document).on('ready', function() {
   };
 
   var addToLocalStorage = function(day, item){
-    appointments[day.attr('id')] = item.html();
+
+    if (!appointments[day.attr('id')]){
+      appointments[day.attr('id')] = [];
+      appointments[day.attr('id')].unshift(item.html());
+    }
+    else {
+      appointments[day.attr('id')].unshift(item.html());
+    }
+    console.log("appointments:",appointments);
+    // appointments[day.attr('id')] = item.html();
     localStorage.setItem("appts", JSON.stringify(appointments));
     day.addClass('populated');
   };
@@ -121,7 +139,7 @@ $(document).on('ready', function() {
 
   };
 
-  // Add agenda item
+  // Open up an add item form
   $(".wrapper").on("click",".day",function(e){
 
     var clicked = $(this);
@@ -149,19 +167,13 @@ $(document).on('ready', function() {
     form.remove();
   });
 
-
-
-
   // Edit agenda item
   $(".wrapper").on("click",".item",function(){
     console.log("Clicked edit an item");
 
     var clicked = $(this);
     var dayWrapper = $(this).parent();
-
-    // var form = $(".item-form:first").clone();
-    // clicked.parent().append(form);   
-    // form.show();    
+ 
     appendForm(dayWrapper);
     clicked.hide();
 
@@ -187,9 +199,6 @@ $(document).on('ready', function() {
     clicked.remove();
     form.remove();
   });
-
- 
-
 
   
 });
