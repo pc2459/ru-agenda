@@ -53,9 +53,11 @@ p.month {
   margin-left: 1.4rem;
 }
 
-.item-form {
+.item-form,
+.item-form-edit {
   margin-left: 20px;
   position: relative;
+  display: none;
 }
 
 .item-textarea{
@@ -84,7 +86,8 @@ p.month {
 
 }
 
-.item-submit {
+.item-submit,
+.item-edit {
 
   border: 0;
   background: url('circle-check-3x.png') no-repeat;

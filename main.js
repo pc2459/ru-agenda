@@ -42,7 +42,8 @@ $(document).on('ready', function() {
   var formatMonth = function(day){
     var reg = /^\d+$/;
     if (reg.test(day))
-      return $('<div class="day-wrapper"><p class="day" id="' + (dateID.add(1,'d').format("YYYYMMDD")) +'">' + day + '</p></div>');
+      return $('<div class="day-wrapper"><p class="day" id="' + 
+        (dateID.add(1,'d').format("YYYYMMDD")) +'">' + day + '</p></div>');
     else 
       return $('<p class="month">' + day + '</p>');
   };
@@ -99,15 +100,17 @@ $(document).on('ready', function() {
 
   // EDIT INLINE FORM /////////////////////////////////////////////////////////
 
-  $(".item-form").hide();
-
   var createForm = function(){
     return $(".item-form:first").clone();
   };
 
-  var appendForm = function(dayWrapper){
-    form = createForm();
-    dayWrapper.append(form);
+  var createEditForm = function(){
+    return $(".item-form-edit:first").clone();
+  };
+
+  var appendForm = function(day, formType){
+    form = formType();
+    day.after(form);
     form.show();
     form.find(".item-textarea").focus();
   };
@@ -116,8 +119,35 @@ $(document).on('ready', function() {
     var newItem = $('<p class="item"></p>');
     newItem.append(data);
     return newItem;
-    
   };
+
+  var updateItem = function(item, data){
+    item.html(data);
+    item.show();
+
+  };
+
+  var updateLocalStorage = function(day, item, data){
+
+      if (appointments[day.attr('id')].length <= 1){
+        appointments[day.attr('id')][0] = data;
+      }
+
+      else if ( appointments[day.attr('id')].length > 1 ){
+        var flag = false;
+          for (var i = 0; i < appointments[day.attr('id')].length; i++){
+            if (appointments[day.attr('id')][i] == item && !flag){
+              appointments[day.attr('id')][i] = data;
+              flag = true;
+            }        
+        }
+      }
+
+    localStorage.setItem("appts", JSON.stringify(appointments));
+  };
+
+  
+
 
   var addToLocalStorage = function(day, item){
 
@@ -145,7 +175,7 @@ $(document).on('ready', function() {
     var clicked = $(this);
     var dayWrapper = $(this).parent();
 
-    appendForm(dayWrapper);
+    appendForm(clicked,createForm);
 
   });
 
@@ -167,6 +197,27 @@ $(document).on('ready', function() {
     form.remove();
   });
 
+  //Update agenda item 
+  $('.wrapper').on('click', '.item-edit', function(event){
+
+    event.preventDefault();
+
+    var data = $(this).parent().siblings('.item-textarea').val();
+    var day = $(this).closest('form').siblings('.day');
+    var dayWrapper = day.parent();
+    var form = $(this).closest('form');
+
+    console.log(data);
+    var oldItem =  $(this).closest('form').prev('.item');
+    console.log("oldItem,",oldItem);
+
+    updateLocalStorage(day, oldItem.html(), data);
+    updateItem(oldItem,data);
+
+    form.remove();
+  });
+
+
   // Edit agenda item
   $(".wrapper").on("click",".item",function(){
     console.log("Clicked edit an item");
@@ -174,11 +225,11 @@ $(document).on('ready', function() {
     var clicked = $(this);
     var dayWrapper = $(this).parent();
  
-    appendForm(dayWrapper);
+    appendForm(clicked,createEditForm);
     clicked.hide();
 
     // Fill the form up
-    var textarea = $(this).siblings('.item-form').find(".item-textarea");
+    var textarea = $(this).siblings('.item-form-edit').find(".item-textarea");
     textarea.val(clicked.text()).focus();
 
   });
@@ -193,20 +244,26 @@ $(document).on('ready', function() {
     console.log("day,",day.attr('id'));
     console.log("clicked,",clicked);
 
-    if (appointments[day.attr('id')].length <= 1){
-      console.log (appointments[day.attr('id')]);
-      delete appointments[day.attr('id')];
+    if(appointments[day.attr('id')]){
+
+      if (appointments[day.attr('id')].length <= 1){
+        console.log (appointments[day.attr('id')]);
+        delete appointments[day.attr('id')];
+      }
+
+      else if ( appointments[day.attr('id')].length > 1 ){
+        var flag = false;
+          for (var i = 0; i < appointments[day.attr('id')].length; i++){
+            if (appointments[day.attr('id')][i] == clicked.html() && !flag){
+              appointments[day.attr('id')].splice(i,1);
+              flag = true;
+            }        
+        }
+      }
+
     }
 
-    else if ( appointments[day.attr('id')].length > 1 ){
-      var flag = false;
-        for (var i = 0; i < appointments[day.attr('id')].length; i++){
-          if (appointments[day.attr('id')][i] == clicked.html() && !flag){
-            appointments[day.attr('id')].splice(i,1);
-            flag = true;
-          }        
-      }
-    }
+
 
     // Delete from local storage
     localStorage.setItem("appts", JSON.stringify(appointments));
@@ -214,6 +271,8 @@ $(document).on('ready', function() {
     clicked.remove();
     form.remove();
   });
+
+  // SPLIT CREATION AND EDITING FORM
 
   
 });
