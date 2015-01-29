@@ -52,7 +52,6 @@ $(document).on('ready', function() {
   };        
 
   var repopulateAppointments = function(){
-    console.log("WTF", $("p").length);
     for (var item in appointments){
       $('[id='+item+']').not('.populated').addClass('populated').after('<p class="item">' + appointments[item] + '</p>');
     }
@@ -113,7 +112,6 @@ $(document).on('ready', function() {
 
   var addToLocalStorage = function(day, item){
     appointments[day.attr('id')] = item.html();
-    console.log(appointments);
     localStorage.setItem("appts", JSON.stringify(appointments));
     day.addClass('populated');
   };
@@ -133,15 +131,17 @@ $(document).on('ready', function() {
 
   });
 
+  // Submit an agenda item
   $('.wrapper').on('click', '.item-submit', function(event){
 
     event.preventDefault();
 
-    var data = $('.item-textarea').val();
+    var data = $(this).parent().siblings('.item-textarea').val();
     var day = $(this).closest('form').siblings('.day');
     var dayWrapper = day.parent();
     var form = $(this).closest('form');
 
+    console.log(data);
     var item = createItem(data);
     addToLocalStorage(day, item);
     appendItem(dayWrapper, item);
@@ -166,32 +166,13 @@ $(document).on('ready', function() {
     clicked.hide();
 
     // Fill the form up
-    var textarea = $(".item-textarea");
+    var textarea = $(this).siblings('.item-form').find(".item-textarea");
     textarea.val(clicked.text()).focus();
-
-    // // Handle form submits
-    // form.find(".item-submit").on('click',function(e){
-    //   e.preventDefault();
-
-    //   var updatedItem = clicked.text(textarea.val());
-    //   appointments[clicked.attr('id')] = updatedItem.html();
-    //   localStorage.setItem("appts", JSON.stringify(appointments));
-
-    //   form.remove();
-    //   clicked.show();
-    // });
-
-    // Handle form deletions
-    // form.find(".item-delete").on('click',function(e){
-    //   e.preventDefault();
-
-    //   clicked.remove();
-    //   form.remove();
-    // });
-
 
   });
 
+
+  // Delete agenda item
   $('.wrapper').on('click','.item-delete',function(e){
     e.preventDefault();
     var clicked = $(this).closest('form').siblings('.item');
