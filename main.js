@@ -130,7 +130,6 @@ $(document).on('ready', function() {
     var dayWrapper = $(this).parent();
 
     appendForm(dayWrapper);
-    console.log("Clicked on a day");
 
   });
 
@@ -158,37 +157,58 @@ $(document).on('ready', function() {
     console.log("Clicked edit an item");
 
     var clicked = $(this);
-    var form = $(".item-form:first").clone();
+    var dayWrapper = $(this).parent();
 
-    form.show();    
+    // var form = $(".item-form:first").clone();
+    // clicked.parent().append(form);   
+    // form.show();    
+    appendForm(dayWrapper);
     clicked.hide();
-    clicked.parent().append(form);   
 
-    var textarea = form.find(".item-textarea");
+    // Fill the form up
+    var textarea = $(".item-textarea");
     textarea.val(clicked.text()).focus();
 
-    // Handle form submits
-    form.find(".item-submit").on('click',function(e){
-      e.preventDefault();
+    // // Handle form submits
+    // form.find(".item-submit").on('click',function(e){
+    //   e.preventDefault();
 
-      var updatedItem = clicked.text(textarea.val());
-      appointments[clicked.attr('id')] = updatedItem.html();
-      localStorage.setItem("appts", JSON.stringify(appointments));
+    //   var updatedItem = clicked.text(textarea.val());
+    //   appointments[clicked.attr('id')] = updatedItem.html();
+    //   localStorage.setItem("appts", JSON.stringify(appointments));
 
-      form.remove();
-      clicked.show();
-    });
+    //   form.remove();
+    //   clicked.show();
+    // });
 
     // Handle form deletions
-    form.find(".item-delete").on('click',function(e){
-      e.preventDefault();
+    // form.find(".item-delete").on('click',function(e){
+    //   e.preventDefault();
 
-      clicked.remove();
-      form.remove();
-    });
+    //   clicked.remove();
+    //   form.remove();
+    // });
 
 
   });
+
+  $('.wrapper').on('click','.item-delete',function(e){
+    e.preventDefault();
+    var clicked = $(this).closest('form').siblings('.item');
+    var day = $(this).closest('form').siblings('.day');
+    var form = $(this).closest('form');
+    console.log("day,",day.attr('id'));
+
+    // Delete from local storage
+    delete appointments[day.attr('id')];
+    localStorage.setItem("appts", JSON.stringify(appointments));
+
+    clicked.remove();
+    form.remove();
+  });
+
+ 
+
 
   
 });
