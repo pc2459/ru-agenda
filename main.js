@@ -6,15 +6,12 @@ $(document).on('ready', function() {
   var wrapper = $('.calendar');
   var now = moment();
 
-
   // localStorage.removeItem("appts");
   // Convert appointments back from the stringified JSON 
   var appointments = JSON.parse(localStorage.getItem("appts"));
   var dateID = moment();
 
   appointments = appointments || {};
-
-    console.log(appointments);
 
   // SET UP FUNCTIONS /////////////////////////////////////////////////////////
   
@@ -85,8 +82,6 @@ $(document).on('ready', function() {
     }
   });
 
-
-
   // PAGINATE, YO /////////////////////////////////////////////////////////////
 
   $(window).scroll(function(){
@@ -142,15 +137,11 @@ $(document).on('ready', function() {
             }        
         }
       }
-
     localStorage.setItem("appts", JSON.stringify(appointments));
   };
 
-  
-
 
   var addToLocalStorage = function(day, item){
-
     if (!appointments[day.attr('id')]){
       appointments[day.attr('id')] = [];
       appointments[day.attr('id')].unshift(item.html());
@@ -166,12 +157,10 @@ $(document).on('ready', function() {
   
   var appendItem = function(dayWrapper, item){
     dayWrapper.append(item);
-
   };
 
   // Open up an add item form
   $(".wrapper").on("click",".day",function(e){
-
     var clicked = $(this);
     var dayWrapper = $(this).parent();
 
@@ -247,7 +236,6 @@ $(document).on('ready', function() {
     if(appointments[day.attr('id')]){
 
       if (appointments[day.attr('id')].length <= 1){
-        console.log (appointments[day.attr('id')]);
         delete appointments[day.attr('id')];
       }
 
@@ -260,10 +248,7 @@ $(document).on('ready', function() {
             }        
         }
       }
-
     }
-
-
 
     // Delete from local storage
     localStorage.setItem("appts", JSON.stringify(appointments));
@@ -271,8 +256,6 @@ $(document).on('ready', function() {
     clicked.remove();
     form.remove();
   });
-
-  // SPLIT CREATION AND EDITING FORM
 
   
 });
